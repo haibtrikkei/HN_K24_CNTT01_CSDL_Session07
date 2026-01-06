@@ -109,18 +109,15 @@ where id in (
 );
 
 =====================================================
-CSDL thương mại điện tử có các bảng:
-
-orders:
-id
-customer_id
-order_date
-total_amount
- 
-
 Viết 1 câu SQL để:
-Lấy danh sách khách hàng có tổng tiền mua hàng lớn hơn tổng tiền trung bình của tất cả khách hàng
-Subquery dùng hàm AVG
+Lấy danh sách khách hàng có tổng tiền mua hàng lớn hơn tổng tiền trung bình của 
+tất cả khách hàng Subquery dùng hàm AVG
 Truy vấn chính dùng GROUP BY và HAVING
 KHÔNG dùng JOIN
 
+select id,name,email,(select sum(total_amount) from orders 
+where customer_id = id) as 'Total money' from customers
+group by customer_id
+having sum(total_amount)>=(
+	select avg(total_amount) from orders
+);
