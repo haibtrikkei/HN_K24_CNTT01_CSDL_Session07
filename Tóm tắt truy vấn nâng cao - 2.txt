@@ -1,0 +1,100 @@
+Bảng: Customers, Orders, Order_Items, Product
+
+Hiển thị tổng số đơn hàng của mỗi khách,
+thông tin gồm:
+
+mã khách hàng, họ tên, địa chỉ, tổng số đơn hàng
+
+Phân tích:
+mã khách hàng, họ tên, địa chỉ -> Bảng Customers
+tổng số đơn hàng -> Bảng Orders
+	-> Làm thế nào để tính được tổng số đơn
+			-> Nhóm theo mã khách hàng và count theo mã đơn hàng
+			
+select cus.customer_id,cus.full_name,cus.address,count(od.order_id) as 'Total orders' 
+from Customers cus join Orders od on cus.customer_id = od.customer_id
+group by cus.customer_id;
+
+TRUY VẤN LỒNG:
+Ví dụ: Hiển thị các lớp học chưa có sinh viên, thông tin gồm:
+mã lớp, tên lớp.
+
+select class_id, class_name from classes where
+class_id not in (select distinct class_id from students);
+
+========================================
+customers:
+id
+name
+email
+
+
+orders
+id
+customer_id
+order_date
+total_amount
+
+1. Lấy danh sách khách hàng đã từng đặt đơn hàng: mã khách hàng, họ tên, email
+select id,name,email from customers where id in (select distinct customer_id
+from orders);
+
+============================================
+2. CSDL thương mại điện tử có các bảng:
+
+orders
+id
+customer_id
+order_date
+total_amount
+ 
+
+Lấy danh sách đơn hàng có giá trị lớn hơn giá trị trung bình của tất cả đơn hàng
+Subquery sử dụng hàm AVG
+KHÔNG dùng JOIN
+
+select id,customer_id,order_date,total_amount 
+from orders
+where total_amount > (select avg(total_amount) from orders);
+
+==============================================
+CSDL thương mại điện tử có các bảng:
+
+customers:
+id
+name
+email
+
+
+orders
+id
+customer_id
+order_date
+total_amount
+price
+ 
+
+* Viết 1 câu SQL để
+	Hiển thị tên khách hàng
+	Hiển thị số lượng đơn hàng của từng khách
+	Sử dụng subquery trong SELECT
+	KHÔNG dùng JOIN, KHÔNG dùng GROUP BY
+
+select full_name,(select count(order_id) as 'Total order' from orders
+where customer_id = customers.customer_id) from customers
+
+-- Truy vấn tương đương
+-- Hiển thị tổng số sinh viên của các lớp, không dùng group by, join
+select class_id,class_name,(select count(stu_id) from students 
+where class_id = classes.class_id) as 'Total students' from classes;
+
+
+=============================================
+Viết 1 câu SQL để:
+Tìm khách hàng có tổng số tiền mua hàng lớn nhất (mã khách hàng, họ tên, email, tổng số tiền mua)
+Sử dụng ít nhất 2 cấp subquery
+Dùng các hàm SUM và MAX
+KHÔNG dùng JOIN
+
+select customer_id,full_name,email, 
+from customers;
