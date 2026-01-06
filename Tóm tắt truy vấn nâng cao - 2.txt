@@ -71,7 +71,7 @@ id
 customer_id
 order_date
 total_amount
-price
+
  
 
 * Viết 1 câu SQL để
@@ -96,5 +96,28 @@ Sử dụng ít nhất 2 cấp subquery
 Dùng các hàm SUM và MAX
 KHÔNG dùng JOIN
 
-select customer_id,full_name,email, 
-from customers;
+select id,name,email, (select sum(total_amount) from orders
+where customer_id = customers.id) as 'Total_Spent'
+from customers
+where id in (
+	select customer_id from orders
+    group by customer_id
+    having sum(total_amount) = (
+		select max(total_spent) from (select sum(total_amount) as total_spent
+        from orders group by customer_id) t
+    )
+);
+
+=====================================================
+Viết 1 câu SQL để:
+Lấy danh sách khách hàng có tổng tiền mua hàng lớn hơn tổng tiền trung bình của 
+tất cả khách hàng Subquery dùng hàm AVG
+Truy vấn chính dùng GROUP BY và HAVING
+KHÔNG dùng JOIN
+
+select id,name,email,(select sum(total_amount) from orders 
+where customer_id = id) as 'Total money' from customers
+group by customer_id
+having sum(total_amount)>=(
+	select avg(total_amount) from orders
+);
